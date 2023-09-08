@@ -1,0 +1,94 @@
+body {
+    padding: 0;
+    margin: 0;
+}
+
+
+
+.navbar {
+    margin: 0 10%;
+}
+
+.front-page {
+    margin: 11% 10%;
+
+}
+
+.friends {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 20px;
+    background-color: #e0e0e0;
+    width: 15rem;
+    padding: 10px;
+    margin: 2% 13%;
+    border-radius: 12px;
+}
+
+.friends a {
+    margin: 0;
+    padding: 0;
+    height: 40px;
+}
+
+.friends a img {
+    height: 40px; 
+    width: 40px; 
+    border-radius: 50%; 
+    border: 1px solid #67e1ff;
+    object-fit: cover;
+}
+
+.friend-info {
+    flex-direction: column;
+    gap: 0px;
+    font-weight: 600;
+}
+
+.friend-info a:nth-child(1){
+    font-size: 15px;
+}
+
+.friend-info a:nth-child(2){
+    font-size: 12px;
+}
+
+.icon-tabler-message-circle, .icon-tabler-bell {
+    cursor: pointer;
+}
+
+.icon-tabler-send {
+    position: absolute;
+    right: 40px;
+    cursor: pointer;
+}
+
+.icon-tabler-user-plus {
+    position: absolute;
+    right: 10px;
+    cursor: pointer;
+}
+
+.user-profile {
+    margin: 5%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.profile-image {
+    
+}
+
+.profile-image img {
+    height: 100px;
+    width: 100px;
+    border-radius: 50%;
+    border: 2px solid;
+    object-fit: cover;
+
+}

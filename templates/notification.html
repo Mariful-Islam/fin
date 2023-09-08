@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}| Transfer{% endblock title %}
+{% block content %}
+<main>
+    <div class="notification">
+        <div class="noti-box">
+            {% for transaction in transactions %}
+            {{transaction.transfer.receiver}}
+            {{transaction.tran_id}}
+            {% endfor %}
+
+        </div>
+    </div>
+</main>
+{% endblock content %}

@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}| Edit Profile | {{request.user.name}}{% endblock title %}
+{% block content %}
+<main>
+    <div class="edit-profile">
+        <form action="" method="POST">
+            {% csrf_token %}
+            {{form.as_p}}
+            <input type="submit" value="Update">
+        </form>
+    </div>
+</main>
+{% endblock content %}

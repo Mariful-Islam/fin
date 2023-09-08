@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}| Edit User | {{request.user.name}}{% endblock title %}
+{% block content %}
+<main>
+    <div class="edit-user">
+        <form action="" method="POST">
+            {% csrf_token %}
+            {{form.as_p}}
+            <label for="password">Old Password</label>
+            <input type="password" placeholder="Old Password">
+            <input type="submit" value="Update">
+        </form>
+    </div>
+</main>
+{% endblock content %}

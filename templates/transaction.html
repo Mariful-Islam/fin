@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}| Transaction{% endblock title %}
+{% block content %}
+<main>
+    <div class="transaction">
+        <ol>
+            {% if messages %}
+            {% for message in messages %}
+            {{message}}
+            {% endfor %}
+            {% endif %}
+            {% for tran in trans %}
+            <li>You send {{ tran.transfer.amount }}$ to {{ tran.transfer.receiver.username }}. Transaction ID is
+                {{ tran.tran_id }}</li>
+            {% endfor %}
+        </ol>
+    </div>
+</main>
+{% endblock content %}
