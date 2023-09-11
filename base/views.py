@@ -21,7 +21,8 @@ def transfer(request):
         account_id = request.POST['accountid']
         amount = request.POST['amount']
         try:
-            receiver_account = BankAccount.objects.get(account_id=account_id)
+            receiver_account = BankAccount.objects.get(
+                account_id=account_id)
             receiver = receiver_account.user
 
             transfer = Transfer.objects.create(
@@ -31,26 +32,25 @@ def transfer(request):
             transfer.save()
             transaction.save()
 
-            sender_account = BankAccount.objects.get(user=request.user)
+            # balance system
+            try:
+                sender_account = BankAccount.objects.get(user=request.user)
+                sender_account.balance = sender_account.balance-float(amount)
+                receiver_account.balance = receiver_account.balance + \
+                    float(amount)
 
-            print(transfer.amount)
-            '''
-            # missing balance system
-            sender_account = BankAccount.objects.get(user=request.user)
-            sender_balance = sender_account.balance
+                sender_account.save()
+                receiver_account.save()
 
-            receiver_balance = receiver_account.balance
-
-            sender_balance = sender_balance-transfer.amount
-            receiver_balance = receiver_balance+transfer.amount
-            '''
-
-            messages.info(
-                request, 'You successfully sent {}$ to {}.'.format(amount, receiver))
-            if not sender_account:
                 messages.info(
-                request, '{} successfully got {}$ from {}.'.format(receiver, amount, sender_account))
+                    request, 'You successfully sent {}$ to {}.'.format(amount, receiver))
+            except:
+                messages.info(request, 'Balance not updated')
 
+            # print(new_sender_balance, new_receiver_balance, amount)
+
+            # sender_account.objects.(balance=new_sender_balance)
+            # receiver_account.objects.update(balance=new_receiver_balance)
 
         except:
             messages.info(request, 'No User Found')
@@ -73,11 +73,24 @@ def friend_transfer(request, account_id):
 
             transfer.save()
             transaction.save()
-            messages.info(
-                request, 'You successfully sent {}$ to {}.'.format(amount, receiver))
+
+            try:
+                sender_account = BankAccount.objects.get(user=request.user)
+                sender_account.balance = sender_account.balance-float(amount)
+                receiver_account.balance = receiver_account.balance + \
+                    float(amount)
+
+                sender_account.save()
+                receiver_account.save()
+
+                messages.info(
+                    request, 'You successfully sent {}$ to {}.'.format(amount, receiver))
+            except:
+                messages.info(request, 'Balance not updated')
 
         except:
             messages.info(request, 'No User Found')
+
         return redirect('transfer')
 
     context = {'account_id': account_id}
@@ -129,8 +142,8 @@ def notification(request):
         user = User.objects.get(username=request.user.username)
         messages = Message.objects.get(user=user)
         bank_account = BankAccount.objects.get(user=user)
-
-        if BankAccount.account_id == bank_account.account_id
+        transfer = Transfer.objects.get(receiver=user)
+        transactions = Transaction.objects.get(transfer=transfer)
     except:
         messages = ''
         transactions = ''
