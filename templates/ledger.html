@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} | Ledger {% endblock title %}
+{% block content %}
+<main>
+    <div class="ledger">
+        <ul>
+            {% for transaction in transactions %}
+            <li>
+                {{request.user.username}} sent {{transaction.transfer.amount}}$ to {{transaction.transfer.}}
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</main>
+{% endblock content %}

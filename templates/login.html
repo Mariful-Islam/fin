@@ -4,10 +4,10 @@
 {% block content %}
 <main>
     <div class="login">
-        <form action="" method="post">
+        <form action="" method="POST">
             {% csrf_token %}
-            <label for="email">Email</label>
-            <input type="email" name="email" />
+            <label for="username">Username</label>
+            <input type="username" name="username" />
 
             <label for="password">Password</label>
             <input type="password" name="password" />

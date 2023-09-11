@@ -1,6 +1,7 @@
 from django.shortcuts import redirect, render
-from django.contrib.auth import login, logout
+from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
+
 from .forms import CustomUserForm, ProfileForm, BankAccountForm, TransferForm
 from .models import User, Transaction, Transfer, Profile, BankAccount, Message
 
@@ -98,11 +99,22 @@ def friend_transfer(request, account_id):
 
 
 def transaction(request):
-
-    trans = Transaction.objects.all()
-    if not trans:
-        messages.info(request, 'No transaction ')
+    try:
+        sender = User.objects.get(username=request.user.username)
+        # receiver =
+        transfer = Transfer.objects.get(receiver=sender)
+        trans = Transaction.objects.get(transfer=transfer)
+    except:
+        trans = ''
+        messages.info(request, 'No transaction yet')
     return render(request, 'transaction.html', {'trans': trans})
+
+
+def ledger(request):
+    transactions = Transaction.objects.all()
+
+    context = {'transactions': transactions}
+    return render(request, 'ledger.html', context)
 
 
 def balance(request, username):
@@ -233,15 +245,15 @@ def log_in(request):
         return redirect('home')
 
     if request.method == "POST":
-        email = request.POST.get('email').lower()
+        username = request.POST.get('username').lower()
         password = request.POST.get('password')
 
         try:
-            user = User.objects.get(email=email)
+            user = User.objects.get(username=username)
         except:
             messages.error(request, 'Username does not existed')
 
-        user = User.objects.filter(email=email, password=password)
+        user = authenticate(username=username, password=password)
         print(user)
         if user is not None:
             login(request, user)

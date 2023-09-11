@@ -34,6 +34,9 @@
                     <div class="navbar-item">
                         <small><a href="{% url 'transaction' %}">Transaction</a></small>
                     </div>
+                    <div class="navbar-item">
+                        <small><a href="{% url 'ledger' %}">Ledger</a></small>
+                    </div>
                     {% if request.user.is_authenticated %}
                     <div class="navbar-item">
                         <small><a href="{% url 'transfer' %}">Transfer</a></small>
@@ -68,6 +71,9 @@
                     {% else %}
                     <div class="navbar-item">
                         <small><a href="{% url 'friends' %}">Friends</a></small>
+                    </div>
+                    <div class="navbar-item">
+                        <small><a href="{% url 'ledger' %}">Ledger</a></small>
                     </div>
                     <div class="navbar-item">
                         <small><a href="{% url 'login' %}">Login</a></small>
