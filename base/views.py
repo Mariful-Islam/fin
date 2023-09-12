@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 
 from .forms import CustomUserForm, ProfileForm, BankAccountForm, TransferForm
-from .models import User, Transaction, Transfer, Profile, BankAccount, Message
+from .models import User, Transaction, Transfer, Profile, BankAccount, Message, Ledger
 
 
 # Create your views here.
@@ -25,6 +25,7 @@ def transfer(request):
             receiver_account = BankAccount.objects.get(
                 account_id=account_id)
             receiver = receiver_account.user
+            sender_account = BankAccount.objects.get(user=request.user)
 
             transfer = Transfer.objects.create(
                 receiver=receiver, amount=amount)
@@ -33,9 +34,15 @@ def transfer(request):
             transfer.save()
             transaction.save()
 
+            ledger = Ledger.objects.create(sender=sender_account.user.username,
+                                           receiver=receiver_account.user.username,
+                                           amount=amount,
+                                           transaction_id=transaction.tran_id)
+
+            ledger.save()
+
             # balance system
             try:
-                sender_account = BankAccount.objects.get(user=request.user)
                 sender_account.balance = sender_account.balance-float(amount)
                 receiver_account.balance = receiver_account.balance + \
                     float(amount)
@@ -47,11 +54,6 @@ def transfer(request):
                     request, 'You successfully sent {}$ to {}.'.format(amount, receiver))
             except:
                 messages.info(request, 'Balance not updated')
-
-            # print(new_sender_balance, new_receiver_balance, amount)
-
-            # sender_account.objects.(balance=new_sender_balance)
-            # receiver_account.objects.update(balance=new_receiver_balance)
 
         except:
             messages.info(request, 'No User Found')
@@ -68,6 +70,8 @@ def friend_transfer(request, account_id):
             receiver_account = BankAccount.objects.get(account_id=account_id)
             receiver = receiver_account.user
 
+            sender_account = BankAccount.objects.get(user=request.user)
+
             transfer = Transfer.objects.create(
                 receiver=receiver, amount=amount)
             transaction = Transaction.objects.create(transfer=transfer)
@@ -75,8 +79,14 @@ def friend_transfer(request, account_id):
             transfer.save()
             transaction.save()
 
+            ledger = Ledger.objects.create(sender=sender_account.user.username,
+                                           receiver=receiver_account.user.username,
+                                           amount=amount,
+                                           transaction_id=transaction.tran_id)
+
+            ledger.save()
+
             try:
-                sender_account = BankAccount.objects.get(user=request.user)
                 sender_account.balance = sender_account.balance-float(amount)
                 receiver_account.balance = receiver_account.balance + \
                     float(amount)
@@ -99,21 +109,16 @@ def friend_transfer(request, account_id):
 
 
 def transaction(request):
-    try:
-        sender = User.objects.get(username=request.user.username)
-        # receiver =
-        transfer = Transfer.objects.get(receiver=sender)
-        trans = Transaction.objects.get(transfer=transfer)
-    except:
-        trans = ''
-        messages.info(request, 'No transaction yet')
-    return render(request, 'transaction.html', {'trans': trans})
+    transactions = Ledger.objects.filter(
+        sender=request.user.username) or Ledger.objects.filter(receiver=request.user.username)
+
+    return render(request, 'transaction.html', {'transactions': transactions})
 
 
 def ledger(request):
-    transactions = Transaction.objects.all()
+    ledgers = Ledger.objects.all()
 
-    context = {'transactions': transactions}
+    context = {'ledgers': ledgers}
     return render(request, 'ledger.html', context)
 
 
@@ -129,7 +134,10 @@ def balance(request, username):
 
 
 def friends(request):
+
     accounts = BankAccount.objects.all()
+    accounts = BankAccount.objects.exclude(user=request.user)
+
     context = {'accounts': accounts}
     return render(request, 'friends.html', context)
 
@@ -205,7 +213,7 @@ def bank_account(request):
         bank_account.save()
         messages.info(
             request, 'Hey ! Mr. {}, Your bank account successfully created.'.format(request.user.username))
-        return redirect('profile')
+        return redirect('profile', username=request.user.username)
 
     return render(request, 'bank-account.html')
 
@@ -285,3 +293,7 @@ def signup(request):
 def log_out(request):
     logout(request)
     return redirect('/')
+
+
+def developer(request):
+    return render(request, 'developer.html')

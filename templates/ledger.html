@@ -5,9 +5,12 @@
 <main>
     <div class="ledger">
         <ul>
-            {% for transaction in transactions %}
+            {% for ledger in ledgers %}
             <li>
-                {{request.user.username}} sent {{transaction.transfer.amount}}$ to {{transaction.transfer.}}
+                {{ledger.sender}} sent {{ledger.amount}}$ to
+                {{ledger.receiver}}.
+                <br>
+                Transaction ID: {{ledger.transaction_id}}
             </li>
             {% endfor %}
         </ul>

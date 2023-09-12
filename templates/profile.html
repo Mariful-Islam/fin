@@ -10,7 +10,7 @@
         {% endfor %}
         {% endif %}
 
-        {% if previous_bank_account.user.username == username %}
+        {% if previous_bank_account.user %}
         <div class="bank-detail">
             Bank details
             <br>

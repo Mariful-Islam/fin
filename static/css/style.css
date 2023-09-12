@@ -59,6 +59,24 @@ body {
     cursor: pointer;
 }
 
+.icon-tabler-bell {
+
+}
+
+#notification-count{
+    height: 15px;
+    width: 15px;
+    border-radius: 50%;
+    object-fit: cover;
+    box-sizing: border-box;
+    background-color: red;
+    margin-top: -27px;
+    margin-left: -2px;
+    color: white;
+    font-size: 10px;
+    text-align: center;
+}
+
 .icon-tabler-send {
     position: absolute;
     right: 40px;
@@ -91,4 +109,16 @@ body {
     border: 2px solid;
     object-fit: cover;
 
+}
+
+footer{
+    position: absolute;
+    background-color: #e4e4e4;
+    bottom: 0;
+    width: 100%;
+}
+
+footer ul {
+    margin: 0 10%;
+    padding: 20px;
 }

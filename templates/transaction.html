@@ -10,10 +10,18 @@
             {{message}}
             {% endfor %}
             {% endif %}
-            {% for tran in trans %}
-            <li>You send {{ tran.transfer.amount }}$ to {{ tran.transfer.receiver.username }}. Transaction ID is
-                {{ tran.tran_id }}</li>
+
+
+            {% for transaction in transactions %}
+            <li>
+                {{transaction.sender}} sent {{transaction.amount}}$ to
+                {{transaction.receiver}}.
+
+                <br>
+                Transaction ID: {{transaction.transaction_id}}
+            </li>
             {% endfor %}
+
         </ol>
     </div>
 </main>

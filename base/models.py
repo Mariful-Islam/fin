@@ -32,8 +32,16 @@ class Transaction(models.Model):
     tran_id = models.UUIDField(
         primary_key=True, default=uuid.uuid4, editable=False)
 
-    # def __str__(self):
-    #     return self.transfer
+
+class Ledger(models.Model):
+    sender = models.CharField(max_length=50)
+    receiver = models.CharField(max_length=50)
+    amount = models.FloatField()
+    transaction_id = models.CharField(max_length=30)
+    time = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.sender
 
 
 class BankAccount(models.Model):
