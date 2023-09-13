@@ -19,8 +19,11 @@
 
                 <br>
                 Transaction ID: {{transaction.transaction_id}}
+                <br>
+                {{transaction.time|timesince}}
             </li>
             {% endfor %}
+            {{transactions.sender}}
 
         </ol>
     </div>

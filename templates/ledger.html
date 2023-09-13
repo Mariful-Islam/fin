@@ -11,6 +11,8 @@
                 {{ledger.receiver}}.
                 <br>
                 Transaction ID: {{ledger.transaction_id}}
+                <br>
+                {{ledger.time|timesince}}
             </li>
             {% endfor %}
         </ul>
