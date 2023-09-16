@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 
-from .models import User, Transfer, Profile, BankAccount, Message
+from .models import User, Transfer, Profile, BankAccount
 
 
 class CustomUserForm(UserCreationForm):

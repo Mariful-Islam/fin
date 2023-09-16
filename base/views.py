@@ -1,21 +1,22 @@
+import csv
+import os
 from django.shortcuts import redirect, render
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 
 from .forms import CustomUserForm, ProfileForm
-from .models import User, Transaction, Transfer, Profile, BankAccount, Ledger
+from .models import User, Profile, BankAccount, Ledger
 import json
-
-from .utils import get_transfer, get_transaction
+from django.conf import settings
+from django.http import Http404, HttpResponse
+from .utils import get_transfer, get_transaction, account_id_generator
 
 # Create your views here.
 
 
 def home(request):
-    data = get_transaction(request)
-    count = data['count']
+    context = get_transaction(request)
 
-    context = {'count': count}
     return render(request, 'index.html', context)
 
 
@@ -39,11 +40,28 @@ def friend_transfer(request, account_id):
 
 
 def transaction(request):
-    data = get_transaction(request)
-    transactions = data['transactions']
-    count = data['count']
+    context = get_transaction(request)
 
-    return render(request, 'transaction.html', {'transactions': transactions, 'count': count})
+    csv_file = open(
+        'static/files/Transactions-{}.csv'.format(request.user.username), 'w', newline='')
+    writter = csv.writer(csv_file)
+    writter.writerow(
+        ['Sender', 'Receiver', 'Amount', 'Transaction ID', 'Time'])
+    for transaction in context['transactions']:
+        sender = transaction.sender
+        receiver = transaction.receiver
+        amount = transaction.amount
+        transaction_id = transaction.transaction_id
+        time = transaction.time
+
+        print(sender, receiver, amount, transaction_id, time)
+
+        row = [sender, receiver, amount, transaction_id, time]
+        writter.writerow(row)
+
+    csv_file.close()
+
+    return render(request, 'transaction.html', context)
 
 
 def ledger(request):
@@ -51,8 +69,30 @@ def ledger(request):
 
     data = get_transaction(request)
     count = data['count']
+    no_ledger = ''
 
-    context = {'ledgers': ledgers, 'count': count}
+    csv_file = open('static/files/ledger.csv', 'w', newline='')
+    writter = csv.writer(csv_file)
+    writter.writerow(
+        ['Sender', 'Receiver', 'Amount', 'Transaction ID', 'Time'])
+    for ledger in ledgers:
+        sender = ledger.sender
+        receiver = ledger.receiver
+        amount = ledger.amount
+        transaction_id = ledger.transaction_id
+        time = ledger.time
+
+        print(sender, receiver, amount, transaction_id, time)
+
+        row = [sender, receiver, amount, transaction_id, time]
+        writter.writerow(row)
+
+    csv_file.close()
+
+    if not ledgers:
+        no_ledger = 'No Ledger Found'
+
+    context = {'ledgers': ledgers, 'count': count, 'no_ledger': no_ledger}
     return render(request, 'ledger.html', context)
 
 
@@ -131,7 +171,8 @@ def bank_account(request):
     data = get_transaction(request)
     count = data['count']
 
-    return render(request, 'bank-account.html', {'count': count})
+    return render(request, 'bank-account.html', {'count': count,
+                                                 'account_id': account_id_generator()})
 
 
 def setting(request):

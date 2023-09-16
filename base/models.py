@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-import uuid
 
 # Create your models here.
 
@@ -19,18 +18,12 @@ class User(AbstractUser):
 
 
 class Transfer(models.Model):
-    receiver = models.ForeignKey(User, on_delete=models.CASCADE)
+    account_id = models.CharField(max_length=20)
     amount = models.FloatField()
-    tran_time = models.DateTimeField(auto_now=True)
+    tran_time = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.receiver.username
-
-
-class Transaction(models.Model):
-    transfer = models.ForeignKey(Transfer, on_delete=models.CASCADE)
-    tran_id = models.UUIDField(
-        primary_key=True, default=uuid.uuid4, editable=False)
 
 
 class Ledger(models.Model):
@@ -38,7 +31,7 @@ class Ledger(models.Model):
     receiver = models.CharField(max_length=50)
     amount = models.FloatField()
     transaction_id = models.CharField(max_length=30)
-    time = models.DateTimeField(auto_now=True)
+    time = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.sender
@@ -46,20 +39,11 @@ class Ledger(models.Model):
 
 class BankAccount(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    account_id = models.CharField(max_length=8, unique=True)
+    account_id = models.CharField(max_length=20, unique=True)
     balance = models.FloatField()
 
     def __str__(self):
         return self.user.username
-
-
-class Message(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    account_id = models.CharField(max_length=8, unique=True)
-    message = models.TextField()
-
-    def __str__(self):
-        return self.message
 
 
 class Profile(models.Model):

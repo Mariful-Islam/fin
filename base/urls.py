@@ -1,10 +1,17 @@
 from django.urls import path
 from . import views
 
+from django.conf import settings
+from django.urls import re_path as url
+from django.views.static import serve
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from django.conf.urls.static import static
+
 urlpatterns = [
     path('', views.home, name='home'),
     path('transaction/', views.transaction, name='transaction'),
     path('ledger/', views.ledger, name='ledger'),
+
     path('transfer/', views.transfer, name='transfer'),
     path('transfer/<str:account_id>/',
          views.friend_transfer, name='friend_transfer'),
@@ -21,3 +28,11 @@ urlpatterns = [
          views.edit_profile, name='edit-profile'),
     path('developer/', views.developer, name='developer'),
 ]
+
+urlpatterns += staticfiles_urlpatterns()
+
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL,
+                          document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL,
+                          document_root=settings.MEDIA_ROOT)
