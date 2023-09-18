@@ -45,6 +45,9 @@ class BankAccount(models.Model):
     def __str__(self):
         return self.user.username
 
+    def get_username(self):
+        return self.user.username
+
 
 class Profile(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -53,3 +56,15 @@ class Profile(models.Model):
 
     def __str__(self):
         return self.user.username
+
+    def get_username(self):
+        return self.user.username
+
+    def get_name(self):
+        return self.user.name
+
+    def get_email(self):
+        return self.user.email
+
+    def get_avater(self):
+        return self.user.avater.url

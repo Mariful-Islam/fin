@@ -62,7 +62,7 @@ body {
 /* ledger Page Design End */
 
 .friend-list {
-    margin: 0 10%;
+    margin: 2% 10% 3%;
     height: 400px;
     border: 1px solid #838383;
     overflow-y: auto;
