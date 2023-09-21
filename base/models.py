@@ -68,3 +68,12 @@ class Profile(models.Model):
 
     def get_avater(self):
         return self.user.avater.url
+
+
+class Revenue(models.Model):
+    revenue = models.FloatField()
+    gas_fee = models.FloatField()
+
+    def __str__(self):
+        revenue = str(self.revenue)
+        return revenue

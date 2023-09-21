@@ -4,6 +4,9 @@
 {% block content %}
 <main>
     <div class="transfer">
+        <div class="gas_fee" style="display: none;">
+            {{gas_fee}}
+        </div>
         <form action="" method="POST">
             {% csrf_token %}
             {% if messages %}
@@ -19,6 +22,21 @@
 
             <input type="submit" value="Send">
         </form>
+        <div id="service_charge">
+            Total Service Charge : <p>0</p>
+        </div>
     </div>
 </main>
+<script>
+
+    let gasFee = document.querySelector('.gas_fee').textContent
+
+    let changeHandle = (value) => {
+        sc = value * (gasFee / 100)
+        let inputPlace = document.querySelector('#service_charge p')
+        inputPlace.innerText = sc
+    }
+
+
+</script>
 {% endblock content %}

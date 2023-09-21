@@ -3,14 +3,13 @@ import os
 from django.shortcuts import redirect, render
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-
 from .forms import CustomUserForm, ProfileForm
-from .models import User, Profile, BankAccount, Ledger
+from .models import Revenue, User, Profile, BankAccount, Ledger
 import json
 from django.conf import settings
 from django.http import Http404, HttpResponse
-from .utils import get_transfer, get_transaction, account_id_generator
-
+from .utils import get_transfer, get_transaction, account_id_generator, get_service_charge
+from django.contrib.auth.decorators import login_required, permission_required
 # Create your views here.
 
 
@@ -23,19 +22,24 @@ def home(request):
 def transfer(request):
     get_transfer(request)
 
+    gas_fee = Revenue.objects.get(id=1).gas_fee
+
     data = get_transaction(request)
     count = data['count']
 
-    return render(request, 'transfer.html', {'count': count})
+    return render(request, 'transfer.html', {'count': count,
+                                             "gas_fee": gas_fee})
 
 
 def friend_transfer(request, account_id):
     get_transfer(request)
 
+    gas_fee = Revenue.objects.get(id=1).gas_fee
+
     data = get_transaction(request)
     count = data['count']
 
-    context = {'account_id': account_id, 'count': count}
+    context = {'account_id': account_id, 'count': count, 'gas_fee': gas_fee}
     return render(request, 'friend-transfer.html', context)
 
 
@@ -274,3 +278,19 @@ def developer(request):
     count = data['count']
 
     return render(request, 'developer.html', {'count': count})
+
+
+@login_required
+@permission_required('is-superuser')
+def gas_fee_update(request):
+    revenue = Revenue.objects.get(id=1)
+
+    previous_gas_fee = revenue.gas_fee
+    if request.method == "POST":
+        updated_gas_fee = request.POST['gas_fee']
+
+        revenue.gas_fee = updated_gas_fee
+        revenue.save()
+        return redirect('home')
+
+    return render(request, 'update-gas-fee.html', {'previous_gas_fee': previous_gas_fee})

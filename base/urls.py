@@ -27,6 +27,7 @@ urlpatterns = [
     path('edit-profile/<str:username>/',
          views.edit_profile, name='edit-profile'),
     path('developer/', views.developer, name='developer'),
+    path('update-gas-fee/', views.gas_fee_update, name='update-gas-fee')
 ]
 
 urlpatterns += staticfiles_urlpatterns()

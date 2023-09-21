@@ -2,9 +2,9 @@ from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from .serializers import TransferSerializer, BankAccountSerializer, LedgerSerializer, UserSerializer, ProfileSerializer
+from .serializers import TransferSerializer, BankAccountSerializer, LedgerSerializer, UserSerializer, ProfileSerializer, RevenueSerializer
 from django.contrib import messages
-from base.models import Ledger, User, Transfer, BankAccount, Profile
+from base.models import Ledger, Revenue, User, Transfer, BankAccount, Profile
 from base.utils import get_transaction, get_transfer, transaction_id_generator
 from django.contrib.auth import authenticate, login, logout
 # Create your views here.
@@ -183,3 +183,10 @@ def get_profile(request, username):
 
     profile_serializer = ProfileSerializer(profile)
     return Response(profile_serializer.data)
+
+
+@api_view(['GET'])
+def revenue(request):
+    revenue = Revenue.objects.get(id=1)
+    serializer = RevenueSerializer(revenue, many=False)
+    return Response(serializer.data)

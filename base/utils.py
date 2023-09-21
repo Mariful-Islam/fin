@@ -1,5 +1,5 @@
 from django.contrib import messages
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 from base.models import *
 import random
 import array
@@ -71,10 +71,28 @@ def account_id_generator():
     return account_id
 
 
+def get_service_charge(amount):
+    gas_fee = Revenue.objects.get(id=1).gas_fee
+    revenue = Revenue.objects.get(id=1)
+
+    try:
+        service_charge = float(amount)*(gas_fee/100)
+        print('SC', service_charge)
+        revenue.revenue += service_charge
+        revenue.save()
+        print('Re', revenue.revenue)
+    except:
+        service_charge = None
+    return service_charge
+
+
 def get_transfer(request):
     if request.method == "POST":
         account_id = request.POST['accountid']
         amount = request.POST['amount']
+
+        service_charge = get_service_charge(amount)
+
         try:
             receiver_account = BankAccount.objects.get(
                 account_id=account_id)
@@ -94,7 +112,12 @@ def get_transfer(request):
 
             # balance system
             try:
-                sender_account.balance = sender_account.balance-float(amount)
+                sender_account.balance = sender_account.balance - \
+                    float(amount)-service_charge
+
+                Revenue.revenue += float(service_charge)
+                Revenue.save()
+
                 receiver_account.balance = receiver_account.balance + \
                     float(amount)
 
@@ -103,6 +126,7 @@ def get_transfer(request):
 
                 messages.info(
                     request, 'You successfully sent {}$ to {}.'.format(amount, receiver))
+
             except:
                 messages.info(request, 'Balance not updated')
 

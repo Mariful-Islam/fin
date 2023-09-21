@@ -39,3 +39,9 @@ class ProfileSerializer(ModelSerializer):
                   "get_name",
                   "get_email",
                   "get_avater"]
+
+
+class RevenueSerializer(ModelSerializer):
+    class Meta:
+        model = Revenue
+        fields = "__all__"
