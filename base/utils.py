@@ -71,28 +71,20 @@ def account_id_generator():
     return account_id
 
 
-def get_service_charge(amount):
-    gas_fee = Revenue.objects.get(id=1).gas_fee
-
-    try:
-        service_charge = amount*(gas_fee/100)
-        print('SC', service_charge)
-    except:
-        service_charge = None
-    return service_charge
-
-
 def get_transfer(request):
     if request.method == "POST":
         account_id = request.POST['accountid']
         amount = request.POST['amount']
+        print(account_id, amount)
 
-        service_charge = get_service_charge(amount)
+        revenues = Revenue.objects.get(id=1)
+        gas_fee = revenues.gas_fee
+        service_charge = float(amount)*(gas_fee/100)
 
         try:
             receiver_account = BankAccount.objects.get(
                 account_id=account_id)
-            receiver = receiver_account.user
+            receiver = receiver_account.user.username
             sender_account = BankAccount.objects.get(user=request.user)
             transfer = Transfer.objects.create(
                 account_id=account_id, amount=amount)
@@ -108,16 +100,17 @@ def get_transfer(request):
 
             # balance system
             try:
-                sender_account.balance = sender_account.balance - amount - service_charge
+                sender_account.balance = sender_account.balance - \
+                    float(amount) - float(service_charge)
 
-                receiver_account.balance = receiver_account.balance + amount
+                receiver_account.balance = receiver_account.balance + \
+                    float(amount)
 
                 sender_account.save()
                 receiver_account.save()
 
-                revenue = Revenue.objects.get(id=1)
-                revenue.revenue += service_charge
-                revenue.save()
+                revenues.revenue += float(service_charge)
+                revenues.save()
 
                 messages.info(
                     request, 'You successfully sent {}$ to {}.'.format(amount, receiver))

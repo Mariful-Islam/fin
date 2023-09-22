@@ -8,7 +8,7 @@ from .models import Revenue, User, Profile, BankAccount, Ledger
 import json
 from django.conf import settings
 from django.http import Http404, HttpResponse
-from .utils import get_transfer, get_transaction, account_id_generator, get_service_charge
+from .utils import get_transfer, get_transaction, account_id_generator
 from django.contrib.auth.decorators import login_required, permission_required
 # Create your views here.
 
