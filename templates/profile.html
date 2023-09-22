@@ -53,9 +53,9 @@
             Profile Details
             {{ profile.address }}
             {{ profile.bio }}
-            {% else %}
+        {% else %}
             <p>Add profile detail <a href="{% url 'edit-profile' username %}">here</a></p>
-            {% endif %}
+        {% endif %}
         </div>
 
 

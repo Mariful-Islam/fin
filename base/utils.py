@@ -73,14 +73,10 @@ def account_id_generator():
 
 def get_service_charge(amount):
     gas_fee = Revenue.objects.get(id=1).gas_fee
-    revenue = Revenue.objects.get(id=1)
 
     try:
-        service_charge = float(amount)*(gas_fee/100)
+        service_charge = amount*(gas_fee/100)
         print('SC', service_charge)
-        revenue.revenue += service_charge
-        revenue.save()
-        print('Re', revenue.revenue)
     except:
         service_charge = None
     return service_charge
@@ -112,17 +108,16 @@ def get_transfer(request):
 
             # balance system
             try:
-                sender_account.balance = sender_account.balance - \
-                    float(amount)-service_charge
+                sender_account.balance = sender_account.balance - amount - service_charge
 
-                Revenue.revenue += float(service_charge)
-                Revenue.save()
-
-                receiver_account.balance = receiver_account.balance + \
-                    float(amount)
+                receiver_account.balance = receiver_account.balance + amount
 
                 sender_account.save()
                 receiver_account.save()
+
+                revenue = Revenue.objects.get(id=1)
+                revenue.revenue += service_charge
+                revenue.save()
 
                 messages.info(
                     request, 'You successfully sent {}$ to {}.'.format(amount, receiver))

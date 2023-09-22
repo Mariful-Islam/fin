@@ -6,7 +6,8 @@
     <div class="edit-profile">
         <form action="" method="POST">
             {% csrf_token %}
-            {{form.as_p}}
+            <input type="text" name="address" placeholder="Enter address" /> <br>
+            <input type="text" name="bio" placeholder="Brief About Yourself" /> <br>
             <input type="submit" value="Update">
         </form>
     </div>

@@ -23,7 +23,14 @@ class Transfer(models.Model):
     tran_time = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.receiver.username
+        username = BankAccount.objects.get(
+            account_id=self.account_id).user.username
+        return username
+
+    def username(self):
+        username = BankAccount.objects.get(
+            account_id=self.account_id).user.username
+        return username
 
 
 class Ledger(models.Model):
@@ -38,7 +45,7 @@ class Ledger(models.Model):
 
 
 class BankAccount(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     account_id = models.CharField(max_length=20, unique=True)
     balance = models.FloatField()
 
@@ -50,7 +57,7 @@ class BankAccount(models.Model):
 
 
 class Profile(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     address = models.CharField(max_length=200)
     bio = models.TextField(null=True)
 

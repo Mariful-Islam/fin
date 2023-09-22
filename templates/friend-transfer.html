@@ -18,12 +18,14 @@
             <label for="accountid">Account ID</label>
             <input type="text" name="accountid" value={{account_id}}>
             <label for="amount">Amount</label>
-            <input type="number" step="0.01" name="amount">
+            <input type="number" step="0.01" name="amount" onkeyup="keyHandle(value)">
 
             <input type="submit" value="Send">
         </form>
-        <div id="service_charge">
-            Total Service Charge : <p>0</p>
+        <div id="service_charge" style="display: flex;">
+            <p>Total Service Charge: </p>
+            <p class="charge_amount" style="margin-left: 7px;"> 0</p>
+            <p>$</p>
         </div>
     </div>
 </main>
@@ -31,9 +33,9 @@
 
     let gasFee = document.querySelector('.gas_fee').textContent
 
-    let changeHandle = (value) => {
+    let keyHandle = (value) => {
         sc = value * (gasFee / 100)
-        let inputPlace = document.querySelector('#service_charge p')
+        let inputPlace = document.querySelector('#service_charge .charge_amount')
         inputPlace.innerText = sc
     }
 
