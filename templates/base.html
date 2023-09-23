@@ -5,9 +5,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> Digital Bank {% block title %} {% endblock title %}</title>
+    <title> Digital Bank {% block title %} {% endblock title %}
+    </title>
+    <link rel="icon" type="image/x-icon" href="{% static 'images/Fin.png' %}">
     <link rel="stylesheet" href="{% static 'css/bulma.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600&display=swap" rel="stylesheet">
 </head>
 
 <body>
@@ -15,7 +20,7 @@
         <nav class="navbar has-shadow">
             <div class="navbar-brand">
                 <a class="navbar-item" href="{% url 'home' %}">
-                    <img src="" alt="Digital Bank">
+                    <img src="{% static 'images/Fin.png' %}" alt="Digital Bank">
                 </a>
                 <div class="navbar-burger burger">
                     <span></span>

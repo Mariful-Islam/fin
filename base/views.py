@@ -203,22 +203,19 @@ def edit_user(request, username):
 
 
 def edit_profile(request, username):
+    user = User.objects.get(username=username)
+    profile = Profile.objects.get(user=user)
+    form = ProfileForm(instance=profile)
     if request.method == "POST":
-        address = request.POST['address']
-        bio = request.POST['bio']
-        profile = Profile.objects.create(
-            user=request.user,
-            address=address,
-            bio=bio,
-        )
-        profile.save()
-
-        return redirect('profile', username=request.user.username)
+        form = ProfileForm(request.POST, instance=profile)
+        if form.is_valid():
+            form.save()
+            return redirect('profile', username=request.user.username)
 
     data = get_transaction(request)
     count = data['count']
 
-    context = {'count': count}
+    context = {'count': count, 'form': form}
     return render(request, 'edit-profile.html', context)
 
 

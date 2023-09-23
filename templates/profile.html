@@ -3,62 +3,53 @@
 {% block title %}| Profile | {{ user.name }}{% endblock title %}
 {% block content %}
 <main>
-    <div class="user-profile">
+    <div class="profile">
         {% if messages %}
         {% for message in messages %}
         {{message}}
         {% endfor %}
         {% endif %}
 
-        {% if previous_bank_account.user %}
-        <div class="bank-detail">
-            Bank details
-            <br>
-            Username: {{previous_bank_account.user.username}} <br>
-            Account ID: {{previous_bank_account.account_id}} <br>
-            Balance: {{previous_bank_account.balance}} <br>
-            <a href="{% url 'friend_transfer' previous_bank_account.account_id %}"><svg
-                    xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-send" width="24" height="24"
-                    viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
-                    stroke-linejoin="round">
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                    <path d="M10 14l11 -11" />
-                    <path d="M21 3l-6.5 18a.55 .55 0 0 1 -1 0l-3.5 -7l-7 -3.5a.55 .55 0 0 1 0 -1l18 -6.5" />
-                </svg>
-            </a>
-            <br>
-        </div>
-
-        {% else %}
-        Hey Mr. {{ username }}, you have no bank account. Create your bank account here
-        <a href="{% url 'bank-account' %}">Bank Account</a>
-        {% endif %}
-
-        {% if user.username == username %}
-        <div class="user-detail">
-            User Details
-            <img src="{{ user.avater.url }}" alt="{{user.username}}"
-                style="height: 100px; width: 100px; object-fit: cover; border-radius: 50%;" />
-            Name: {{ user.name }}
-            Username: {{ user.username }}
-            Email: {{ user.email }}
-
-            {% else %}
-            <p>Add user detail <a href="{% url 'edit-user' request.user.username %}">here</a></p>
-            {% endif %}
-        </div>
 
         {% if profile.user.username == username %}
         <div class="profile-detail">
-            Profile Details
-            {{ profile.address }}
-            {{ profile.bio }}
-        {% else %}
+            <div class="profile-image">
+                {% if profile.get_avater %}
+                <img src="{{ profile.get_avater }}" alt="">
+                {% else %}
+                <img src="{% static 'images/user.png' %}" alt="">
+                {% endif %}
+            </div>
+            <div class="profile-name">
+                Name: {{ profile.get_name }}
+            </div>
+            <div class="profile-username">
+                Username: {{ profile.get_username }}
+            </div>
+            <div class="profile-balance">
+                Balance: {{ profile.get_balance|floatformat:2 }}$
+            </div>
+            <div class="profile-id">
+                Account ID: {{ profile.get_account_id }}
+            </div>
+            <div class="profile-bio">
+                <b>Bio</b> <br>{{ profile.bio }}
+            </div>
+            <div class="profile-address">
+                <b>Address</b> <br>{{ profile.address }}
+            </div>
+
+            {% else %}
             <p>Add profile detail <a href="{% url 'edit-profile' username %}">here</a></p>
-        {% endif %}
         </div>
+        {% endif %}
 
-
+        {% if not previous_bank_account.user %}
+        <div class="bank-account">
+            Hey Mr. {{ username }}, you have no bank account. Create your bank account here
+            <a href="{% url 'bank-account' %}">Bank Account</a>
+        </div>
+        {% endif %}
 
     </div>
 </main>

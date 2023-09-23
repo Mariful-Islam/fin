@@ -1,6 +1,7 @@
 body {
     padding: 0;
     margin: 0;
+    font-family: 'Outfit', sans-serif;
 }
 
 
@@ -142,13 +143,78 @@ body {
     cursor: pointer;
 }
 
-.user-profile {
-    margin: 5%;
+
+
+
+footer{
+    background-color: #e4e4e4;
+
+    width: 100%;
+}
+
+footer ul {
+    margin: 0 10%;
+    padding: 20px;
+}
+
+/* Transfer page start */
+.transfer {
+    margin: 2% 10%;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+}
 
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background-color: #f1f1f1; 
+    padding: 30px; 
+    border-radius: 10px; 
+}
+
+form input {
+    height: 30px;
+    width: 300px;
+    border: 1px solid #67e1ff;
+    border-radius: 10px;
+    font-weight: 700;
+    padding: 5px;
+}
+
+form input:focus {
+    outline: 0;
+    box-shadow:0 0 2px 2px #67e1ff;
+}
+
+form input[type='submit']:hover {
+    font-weight: 700;
+    background-color: #67e1ff;
+}
+
+/* Transfer page end */
+
+
+/* Balance page start */
+.balance {
+    display: flex;
+    justify-content: center;
+}
+/* Balance page end */
+
+/* Profile page design start */
+.profile{
+    margin: 0 10%;
+    
+}
+
+.profile-detail {
+    display: flex;
+    flex-direction: column;
+    justify-items: center;
+    align-items: center;
 }
 
 .profile-image {
@@ -164,13 +230,68 @@ body {
 
 }
 
-footer{
-    background-color: #e4e4e4;
+.profile-name{
 
-    width: 100%;
 }
+.profile-username{
 
-footer ul {
-    margin: 0 10%;
+}
+.profile-balance, .profile-id, .profile-bio, .profile-address {
+    margin: 10px;
     padding: 20px;
+    background-color: #f1f1f1;
+    width: 50%;
+    border-radius: 10px;
+    text-align: center;
 }
+.profile-id{
+
+}
+.profile-bio b, .profile-address b{
+    text-decoration: underline;
+    margin-bottom: 3px;
+}
+
+
+/* Profile page design End */
+
+/* Setting Start */
+.edit-profile {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 3% 10%;
+}
+textarea {
+    width: 300px;
+    border: 1px solid #67e1ff;
+    border-radius: 10px;
+    padding: 5px;
+}
+textarea:focus{
+    outline: 0;
+    box-shadow:0 0 2px 2px #67e1ff;
+    padding: 5px;
+}
+/* Setting End */
+
+
+/* login page start */
+.login {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 3% 10%;
+}
+/* login page end */
+
+
+
+/* signup page start */
+.signup {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 3% 10%;
+}
+/* sign up page end */

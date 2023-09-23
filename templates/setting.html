@@ -4,7 +4,6 @@
 {% block content %}
 <main>
     <div class="user-setting">
-        <a href="{% url 'profile' request.user.username %}">Add Profile</a>
         <a href="{% url 'edit-user' request.user.username %}">Edit User</a>
         <br>
         <a href="{% url 'edit-profile' request.user.username %}">Edit Profile</a>

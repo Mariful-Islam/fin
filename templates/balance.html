@@ -4,7 +4,9 @@
 {% block content %}
 <main>
     <div class="balance">
-        Balance: {{ balance }}$
+        <div class="profile-balance">
+            Balance: {{ balance|floatformat:2 }}$
+        </div>
     </div>
 </main>
 {% endblock content %}

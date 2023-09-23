@@ -76,6 +76,16 @@ class Profile(models.Model):
     def get_avater(self):
         return self.user.avater.url
 
+    def get_account_id(self):
+        account = BankAccount.objects.get(user=self.user)
+        account_id = account.account_id
+        return account_id
+    
+    def get_balance(self):
+        account = BankAccount.objects.get(user=self.user)
+        balance = account.balance
+        return balance
+
 
 class Revenue(models.Model):
     revenue = models.FloatField()
