@@ -3,7 +3,7 @@ import os
 from django.shortcuts import redirect, render
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from .forms import CustomUserForm, ProfileForm
+from .forms import *
 from .models import Revenue, User, Profile, BankAccount, Ledger
 import json
 from django.conf import settings
@@ -14,7 +14,11 @@ from django.contrib.auth.decorators import login_required, permission_required
 
 
 def home(request):
+    ledgers = Ledger.objects.all()
+    ledger_count = ledgers.count()
     context = get_transaction(request)
+
+    context.update({'ledger_count': ledger_count})
 
     return render(request, 'index.html', context)
 
@@ -27,8 +31,11 @@ def transfer(request):
     data = get_transaction(request)
     count = data['count']
 
+    ledgers = Ledger.objects.all()
+    ledger_count = ledgers.count()
+
     return render(request, 'transfer.html', {'count': count,
-                                             "gas_fee": gas_fee})
+                                             "gas_fee": gas_fee, 'ledger_count': ledger_count})
 
 
 def friend_transfer(request, account_id):
@@ -39,12 +46,20 @@ def friend_transfer(request, account_id):
     data = get_transaction(request)
     count = data['count']
 
-    context = {'account_id': account_id, 'count': count, 'gas_fee': gas_fee}
+    ledgers = Ledger.objects.all()
+    ledger_count = ledgers.count()
+
+    context = {'account_id': account_id, 'count': count,
+               'gas_fee': gas_fee, 'ledger_count': ledger_count}
     return render(request, 'friend-transfer.html', context)
 
 
 def transaction(request):
+    ledgers = Ledger.objects.all()
+    ledger_count = ledgers.count()
+
     context = get_transaction(request)
+    context.update({'ledger_count': ledger_count})
 
     csv_file = open(
         'static/files/Transactions-{}.csv'.format(request.user.username), 'w', newline='')
@@ -70,6 +85,7 @@ def transaction(request):
 
 def ledger(request):
     ledgers = Ledger.objects.all()
+    ledger_count = ledgers.count()
 
     data = get_transaction(request)
     count = data['count']
@@ -96,11 +112,13 @@ def ledger(request):
     if not ledgers:
         no_ledger = 'No Ledger Found'
 
-    context = {'ledgers': ledgers, 'count': count, 'no_ledger': no_ledger}
+    context = {'ledgers': ledgers, 'ledger_count': ledger_count,
+               'count': count, 'no_ledger': no_ledger}
     return render(request, 'ledger.html', context)
 
 
 def balance(request, username):
+
     try:
         user = User.objects.get(username=username)
         balance = BankAccount.objects.get(user=user).balance
@@ -110,7 +128,11 @@ def balance(request, username):
     data = get_transaction(request)
     count = data['count']
 
-    context = {'balance': balance, 'count': count}
+    ledgers = Ledger.objects.all()
+    ledger_count = ledgers.count()
+
+    context = {'balance': balance, 'count': count,
+               'ledger_count': ledger_count}
     return render(request, 'balance.html', context)
 
 
@@ -122,11 +144,16 @@ def friends(request):
     data = get_transaction(request)
     count = data['count']
 
-    context = {'accounts': accounts, 'count': count}
+    ledgers = Ledger.objects.all()
+    ledger_count = ledgers.count()
+
+    context = {'accounts': accounts, 'count': count,
+               'ledger_count': ledger_count}
     return render(request, 'friends.html', context)
 
 
 def profile(request, username):
+
     user = User.objects.get(username=username)
     try:
         previous_bank_account = BankAccount.objects.get(user=user)
@@ -151,9 +178,12 @@ def profile(request, username):
     data = get_transaction(request)
     count = data['count']
 
+    ledgers = Ledger.objects.all()
+    ledger_count = ledgers.count()
+
     context = {'previous_bank_account': previous_bank_account,
                'user': user, 'profile': profile, 'username': username,
-               'count': count}
+               'count': count, 'ledger_count': ledger_count}
     return render(request, 'profile.html', context)
 
 
@@ -175,31 +205,64 @@ def bank_account(request):
     data = get_transaction(request)
     count = data['count']
 
+    ledgers = Ledger.objects.all()
+    ledger_count = ledgers.count()
+
     return render(request, 'bank-account.html', {'count': count,
-                                                 'account_id': account_id_generator()})
+                                                 'account_id': account_id_generator(), 'ledger_count': ledger_count})
 
 
 def setting(request):
 
+    user = User.objects.get(username=request.user.username)
+    profile = Profile.objects.get(user=user)
+
     data = get_transaction(request)
     count = data['count']
 
-    return render(request, 'setting.html', {'count': count})
+    ledgers = Ledger.objects.all()
+    ledger_count = ledgers.count()
+
+    return render(request, 'setting.html', {'count': count, 'profile': profile, 'ledger_count': ledger_count})
 
 
 def edit_user(request, username):
-    user = User.objects.get(username=username)
-    form = CustomUserForm(instance=user)
-    if request.method == "POST":
-        form = CustomUserForm(request.POST, instance=user)
-        if form.is_valid():
-            form.save()
+    user = User.objects.get(username=request.user.username)
+
+    user.name = request.POST.get('name')
+    user.username = request.POST.get('username')
+    user.email = request.POST.get('email')
+    user.avater = request.FILES
+    user.save()
 
     data = get_transaction(request)
     count = data['count']
 
-    context = {'form': form, 'count': count}
+    ledgers = Ledger.objects.all()
+    ledger_count = ledgers.count()
+
+    context = {'user': user, 'count': count, 'ledger_count': ledger_count}
     return render(request, 'edit-user.html', context)
+
+
+def add_profile(request):
+    form = ProfileForm()
+    if request.method == "POST":
+        profile = Profile.objects.create(
+            user=request.user,
+            address=request.POST.get('address'),
+            bio=request.POST.get('bio')
+        )
+        profile.save()
+        return redirect('profile', username=request.user.username)
+
+    data = get_transaction(request)
+    count = data['count']
+
+    ledgers = Ledger.objects.all()
+    ledger_count = ledgers.count()
+
+    return render(request, 'edit-profile.html', {'form': form, 'count': count, 'ledger_count': ledger_count})
 
 
 def edit_profile(request, username):
@@ -215,7 +278,11 @@ def edit_profile(request, username):
     data = get_transaction(request)
     count = data['count']
 
-    context = {'count': count, 'form': form}
+    ledgers = Ledger.objects.all()
+    ledger_count = ledgers.count()
+
+    context = {'count': count, 'ledger_count': ledger_count,
+               'form': form, 'profile': profile}
     return render(request, 'edit-profile.html', context)
 
 
@@ -244,7 +311,10 @@ def log_in(request):
     data = get_transaction(request)
     count = data['count']
 
-    context = {'page': page, 'count': count}
+    ledgers = Ledger.objects.all()
+    ledger_count = ledgers.count()
+
+    context = {'page': page, 'count': count, 'ledger_count': ledger_count}
     return render(request, 'login.html', context)
 
 
@@ -264,7 +334,10 @@ def signup(request):
     data = get_transaction(request)
     count = data['count']
 
-    context = {'form': form, 'count': count}
+    ledgers = Ledger.objects.all()
+    ledger_count = ledgers.count()
+
+    context = {'form': form, 'count': count, 'ledger_count': ledger_count}
     return render(request, 'signup.html', context)
 
 
@@ -278,7 +351,10 @@ def developer(request):
     data = get_transaction(request)
     count = data['count']
 
-    return render(request, 'developer.html', {'count': count})
+    ledgers = Ledger.objects.all()
+    ledger_count = ledgers.count()
+
+    return render(request, 'developer.html', {'count': count, 'ledger_count': ledger_count})
 
 
 @login_required
@@ -294,4 +370,12 @@ def gas_fee_update(request):
         revenue.save()
         return redirect('home')
 
-    return render(request, 'update-gas-fee.html', {'previous_gas_fee': previous_gas_fee})
+    data = get_transaction(request)
+    count = data['count']
+
+    ledgers = Ledger.objects.all()
+    ledger_count = ledgers.count()
+
+    return render(request, 'update-gas-fee.html', {'previous_gas_fee': previous_gas_fee,
+                                                   'count': count,
+                                                   'ledger_count': ledger_count})

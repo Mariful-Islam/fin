@@ -125,7 +125,7 @@ def get_transfer(request):
 
 def get_transaction(request):
     transactions = Ledger.objects.filter(
-        sender='da') or Ledger.objects.filter(receiver='da')
+        sender=request.user.username) or Ledger.objects.filter(receiver=request.user.username)
     count = transactions.count()
     no_tran = ''
 

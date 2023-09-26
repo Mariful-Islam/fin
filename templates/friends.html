@@ -15,7 +15,7 @@
             <a href="{% url 'profile' account.user.username %}"><img src="{{ account.user.avater.url }}" alt=""></a>
             <div class="friend-info">
                 <p><a href="{% url 'profile' account.user.username %}">{{ account.user.username }}</a></p>
-                <p style="font-size: 0.8rem; color:#6e6e6e;">{{ account.balance }}$</p>
+                <p style="font-size: 0.8rem; color:#6e6e6e;">{{ account.balance|floatformat:2 }}$</p>
                 <p><a href="{% url 'balance' account.user.username %}">ID: {{ account.account_id }}</a></p>
             </div>
             <a href="{% url 'friend_transfer' account.account_id %}"><svg xmlns="http://www.w3.org/2000/svg"

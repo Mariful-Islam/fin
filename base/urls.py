@@ -2,8 +2,6 @@ from django.urls import path
 from . import views
 
 from django.conf import settings
-from django.urls import re_path as url
-from django.views.static import serve
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.conf.urls.static import static
 
@@ -24,6 +22,8 @@ urlpatterns = [
     path('bank-account/', views.bank_account, name='bank-account'),
     path('setting/', views.setting, name='setting'),
     path('edit-user/<str:username>/', views.edit_user, name='edit-user'),
+    path('add-profile/',
+         views.add_profile, name='add-profile'),
     path('edit-profile/<str:username>/',
          views.edit_profile, name='edit-profile'),
     path('developer/', views.developer, name='developer'),
