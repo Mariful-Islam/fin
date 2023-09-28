@@ -1,16 +1,25 @@
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+
+from base.forms import CustomUserForm
+
 from .serializers import TransferSerializer, BankAccountSerializer, LedgerSerializer, UserSerializer, ProfileSerializer, RevenueSerializer
 from django.contrib import messages
 from base.models import Ledger, Revenue, User, Transfer, BankAccount, Profile
 from base.utils import get_transaction, get_transfer, transaction_id_generator
 from django.contrib.auth import authenticate, login, logout
+import json
 # Create your views here.
 
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
+
+from rest_framework import generics, permissions, mixins
+from .serializers import RegisterSerializer, UserSerializer
 
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -36,24 +45,17 @@ def getRouter(request):
     return JsonResponse(data)
 
 
-@api_view(['GET', 'POST'])
-def sign_up(request):
-    if request.method == "POST":
-        name = request.data['name']
-        username = request.data['username']
-        email = request.data['email']
-        avater = request.data['avater']
-        password1 = request.data['password1']
-        password2 = request.data['password2']
+class RegisterApi(generics.GenericAPIView):
+    serializer_class = RegisterSerializer
 
-        User.objects.create(name=name,
-                            username=username,
-                            email=email,
-                            avater=avater,
-                            password1=password1,
-                            password2=password2)
-
-    return Response()
+    def post(self, request, *args,  **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+        return Response({
+            "user": UserSerializer(user, context=self.get_serializer_context()).data,
+            "message": "User Created Successfully.  Now perform Login to get your token",
+        })
 
 
 @api_view(['GET', 'POST'])
@@ -78,6 +80,9 @@ def log_in(request):
 
 @api_view(['GET', 'POST'])
 def transfer(request):
+    data = json.loads(request.body)
+    sender = data['sender']
+    print(sender)
     if request.method == 'POST':
         account_id = request.data['account_id']
         amount = request.data['amount']
@@ -90,7 +95,7 @@ def transfer(request):
         )
 
         Ledger.objects.create(
-            sender=request.user.username,
+            sender=sender,
             receiver=receiver_account.username,
             amount=amount,
             transaction_id=transaction_id_generator()
@@ -102,10 +107,10 @@ def transfer(request):
 
 
 @api_view(['GET'])
-def transactions(request):
-    context = get_transaction(request)
-    transactions = context['transactions']
+def transactions(request, username):
 
+    transactions = Ledger.objects.filter(
+        sender=username) | Ledger.objects.filter(receiver=username)
     serializer = LedgerSerializer(transactions, many=True)
     return Response(serializer.data)
 
@@ -119,9 +124,9 @@ def ledger(request):
 
 
 @api_view(['GET'])
-def balance(request):
+def balance(request, username):
     try:
-        user = User.objects.get(username=request.user.username)
+        user = User.objects.get(username=username)
         balance = BankAccount.objects.get(user=user).balance
     except:
         balance = 0

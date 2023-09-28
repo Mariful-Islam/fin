@@ -43,6 +43,9 @@ class Ledger(models.Model):
     def __str__(self):
         return self.sender
 
+    class Meta:
+        ordering = ['-time']
+
 
 class BankAccount(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -80,7 +83,7 @@ class Profile(models.Model):
         account = BankAccount.objects.get(user=self.user)
         account_id = account.account_id
         return account_id
-    
+
     def get_balance(self):
         account = BankAccount.objects.get(user=self.user)
         balance = account.balance

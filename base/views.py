@@ -232,7 +232,6 @@ def edit_user(request, username):
     user.name = request.POST.get('name')
     user.username = request.POST.get('username')
     user.email = request.POST.get('email')
-    user.avater = request.FILES
     user.save()
 
     data = get_transaction(request)
