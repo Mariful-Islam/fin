@@ -27,3 +27,16 @@ This is a very simple banking system where perform transder money from one perso
 11. Type the two command to create database migration --- "python manage.py makemigrations" then "python manage.py migrate.
 12. To create superuser using this command --- "python manage.py createsuperuser" and enter name, email and password.
 13. To execute the web application --- "python manage.py runserver"
+
+## Description
+
+1. A user can send money to another user and also receive money. So, the amount of money that was sent is minus from the sender account and added to the receiver account.
+2. Easily send and receive money through REST API which is developed using Django Rest Framework. 
+3. A react app was also developed to test the REST API such transfer money using the API.
+4. The application (FIN) records the ledger and transaction. Also, generates transaction ID to identify the transaction.
+5. Download ledger and transactions record as csv file.
+6. The application shows the list of users which have bank accounts.
+7. Every user has to create a bank account otherwise he/she cannot send or receive money. Every bank account has a unique account ID which is suggested or customized in the bank account creation time. 
+8. In the react FIN app, a user can perform all actions.
+9. Apply algorithms, data structure and my knowledge regularly to increase efficiency, scalability, reusability, security. 
+
