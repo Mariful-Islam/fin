@@ -112,6 +112,8 @@ def get_transfer(request):
                 revenues.revenue += float(service_charge)
                 revenues.save()
 
+                re
+
                 messages.info(
                     request, 'You successfully sent {}$ to {}.'.format(amount, receiver))
 

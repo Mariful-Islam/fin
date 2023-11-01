@@ -192,6 +192,6 @@ def get_profile(request, username):
 
 @api_view(['GET'])
 def revenue(request):
-    revenue = Revenue.objects.get(id=1)
-    serializer = RevenueSerializer(revenue, many=False)
+    revenue = Revenue.objects.all()
+    serializer = RevenueSerializer(revenue, many=True)
     return Response(serializer.data)

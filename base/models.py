@@ -93,7 +93,21 @@ class Profile(models.Model):
 class Revenue(models.Model):
     revenue = models.FloatField()
     gas_fee = models.FloatField()
+    date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         revenue = str(self.revenue)
         return revenue
+
+    def get_per_month_revenue(self):
+        res = []
+        for i in range(1, 12):
+            r = Revenue.objects.filter(date__month=(i))
+            res.append(r)
+
+        return res
+
+    def get_per_day_revenue(self):
+        day = Revenue.objects.filter(date__year=(
+            2023), date__month=(10), date__day=(5))
+        return day
